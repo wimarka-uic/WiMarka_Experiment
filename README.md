@@ -10,12 +10,15 @@ This repository is used for experiments evaluating LLM translation tasks, as par
 ### Setup
 
 Create a virtual environment
+
 `python -m venv WMK`
 
 Activate the virtual environment
+
 `WMK\Scripts\activate`
 
 Install the packages
+
 `pip install -r requirements.txt`
 
 
@@ -24,6 +27,7 @@ Install the packages
 ##### Models
 
 Pull a model from Ollama
+
 `ollama pull <model_name>`
 
 The following models used for the experiment:
@@ -33,10 +37,17 @@ The following models used for the experiment:
 - phi3:3.8b 
 
 Ensure the model has been pulled
+
 `ollama list`
 
 Start running the model
+
 `ollama run <model_name>`
+
+or if you want to run the model and pass the file
+
+
+`type <Relative_path> | ollama run <model_name> "DIRECT ANSWERS ONLY! TRANSLATE ALL OF THESE SENTENCES TO <LANGUAGE>"`
 
 ##### Targeted Languages
 
