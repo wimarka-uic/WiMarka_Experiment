@@ -32,7 +32,7 @@ def translate(file, language):
         print(f"{cout}. {response}")
         cout+=1
         
-FILE_PATH = r"Simple_Declarative\EN.txt"
+FILE_PATH = r"Test_Cases\Simple_Declarative\EN.txt"
 FILE = open(FILE_PATH, 'r', encoding="utf-8")
 LANGUAGE = "Tagalog"
 
