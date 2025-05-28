@@ -36,4 +36,4 @@ FILE_PATH = r"Simple_Declarative\EN.txt"
 FILE = open(FILE_PATH, 'r', encoding="utf-8")
 LANGUAGE = "Tagalog"
 
-translate(FILE_PATH, LANGUAGE)
+translate(FILE, LANGUAGE)
