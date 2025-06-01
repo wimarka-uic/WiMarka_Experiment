@@ -36,6 +36,7 @@ class Sentence(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     source_text = Column(Text)
+    tagalog_source_text = Column(Text, nullable=True)  # Tagalog version of source text
     machine_translation = Column(Text)
     reference_translation = Column(Text, nullable=True)
     source_language = Column(String)
@@ -60,7 +61,6 @@ class TextHighlight(Base):
     text_type = Column(String)  # 'machine' or 'reference' - which text this highlight belongs to
     
     # Annotation details
-    highlight_type = Column(String)  # 'error', 'suggestion', 'note'
     comment = Column(Text)  # User's comment about this highlight
     
     # Metadata
@@ -85,6 +85,7 @@ class Annotation(Base):
     errors_found = Column(Text)  # Legacy field - JSON string of error categories and descriptions
     suggested_correction = Column(Text)  # Legacy field - Suggested improved translation
     comments = Column(Text)  # General comments (in addition to highlight-specific comments)
+    final_form = Column(Text)  # Final corrected form of the sentence
     
     # Metadata
     time_spent_seconds = Column(Integer)  # Time spent on annotation

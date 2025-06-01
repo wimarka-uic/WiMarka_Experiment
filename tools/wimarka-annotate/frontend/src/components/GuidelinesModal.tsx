@@ -69,104 +69,97 @@ const GuidelinesModal: React.FC<GuidelinesModalProps> = ({ isOpen, onClose, onAc
           <div className="space-y-6">
             {/* Overview */}
             <section>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">Overview</h3>
-              <p className="text-gray-700 mb-3">
-                You will be evaluating machine translations by comparing them to source texts and reference translations. 
-                Your task is to identify errors, assess quality, and provide constructive feedback.
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Overview</h4>
+              <p className="text-gray-600 mb-4">
+                You will be evaluating machine-translated sentences by comparing them with reference text. 
+                Your task is to assess the quality of the translation and provide detailed feedback.
               </p>
             </section>
 
-            {/* Quality Assessment */}
+            {/* Text Highlighting */}
             <section>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">Quality Assessment Criteria</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Fluency (1-5)</h4>
-                  <p className="text-sm text-gray-600 mb-2">How natural and grammatically correct is the translation?</p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>5 - Perfect fluency</li>
-                    <li>4 - Minor fluency issues</li>
-                    <li>3 - Some fluency problems</li>
-                    <li>2 - Major fluency issues</li>
-                    <li>1 - Very poor fluency</li>
-                  </ul>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Adequacy (1-5)</h4>
-                  <p className="text-sm text-gray-600 mb-2">How well does the translation convey the source meaning?</p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>5 - Perfect meaning preservation</li>
-                    <li>4 - Minor meaning loss</li>
-                    <li>3 - Some meaning preserved</li>
-                    <li>2 - Little meaning preserved</li>
-                    <li>1 - No meaning preserved</li>
-                  </ul>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Text Highlighting & Comments</h4>
+              <div className="space-y-3">
+                <p className="text-gray-600">
+                  Select specific text portions to highlight and add comments about issues or observations:
+                </p>
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-4 h-4 bg-blue-200 border border-blue-400 rounded"></div>
+                    <span className="text-sm font-medium text-blue-900">Highlight & Comment</span>
+                  </div>
+                  <p className="text-sm text-blue-800">
+                    Select any problematic text and add a comment explaining the issue, your observation, or suggestion for improvement.
+                  </p>
                 </div>
               </div>
             </section>
 
-            {/* Highlighting System */}
+            {/* Final Form */}
             <section>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">Text Highlighting System</h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-red-200 border border-red-400 rounded"></div>
-                  <span className="font-medium">Error:</span>
-                  <span className="text-gray-600">Mark grammatical errors, mistranslations, or incorrect terminology</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-yellow-200 border border-yellow-400 rounded"></div>
-                  <span className="font-medium">Suggestion:</span>
-                  <span className="text-gray-600">Highlight areas that could be improved or alternative translations</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-blue-200 border border-blue-400 rounded"></div>
-                  <span className="font-medium">Note:</span>
-                  <span className="text-gray-600">Mark interesting linguistic phenomena or provide additional context</span>
-                </div>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Final Form Requirement</h4>
+              <div className="bg-green-50 p-4 rounded-lg">
+                <p className="text-green-800">
+                  <strong>Required when you add annotations:</strong> After highlighting issues and adding comments, provide a corrected final form of the sentence. 
+                  This should be your version of what the translation should be.
+                </p>
               </div>
             </section>
 
             {/* Best Practices */}
             <section>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">Best Practices</h3>
-              <div className="grid gap-3">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="text-green-600 mt-1 flex-shrink-0" size={16} />
-                  <span className="text-gray-700">Be objective and consistent in your evaluations</span>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Best Practices</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h5 className="font-medium text-gray-700 mb-2">✅ Do:</h5>
+                  <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                    <li>Read both sentences completely before rating</li>
+                    <li>Consider context and domain-specific terminology</li>
+                    <li>Highlight specific problematic words/phrases</li>
+                    <li>Provide clear, constructive comments</li>
+                    <li>Be consistent in your evaluation criteria</li>
+                  </ul>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="text-green-600 mt-1 flex-shrink-0" size={16} />
-                  <span className="text-gray-700">Provide specific, constructive comments when highlighting text</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="text-green-600 mt-1 flex-shrink-0" size={16} />
-                  <span className="text-gray-700">Consider cultural context and target audience when evaluating</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="text-green-600 mt-1 flex-shrink-0" size={16} />
-                  <span className="text-gray-700">Focus on both accuracy and naturalness of the translation</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="text-green-600 mt-1 flex-shrink-0" size={16} />
-                  <span className="text-gray-700">Take your time to carefully review each sentence pair</span>
+                
+                <div>
+                  <h5 className="font-medium text-gray-700 mb-2">❌ Don't:</h5>
+                  <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                    <li>Rush through annotations</li>
+                    <li>Let personal preferences affect scores</li>
+                    <li>Ignore minor but important details</li>
+                    <li>Give inconsistent ratings for similar issues</li>
+                    <li>Leave vague or unhelpful comments</li>
+                  </ul>
                 </div>
               </div>
             </section>
 
-            {/* Important Notes */}
+            {/* Examples */}
             <section>
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                <div className="flex items-center mb-2">
-                  <AlertTriangle className="text-amber-600 mr-2" size={20} />
-                  <h4 className="font-semibold text-amber-900">Important Notes</h4>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Example Evaluation</h4>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Source:</span>
+                    <p className="text-sm italic">"The student submitted his assignment before the deadline."</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Machine Translation:</span>
+                    <p className="text-sm">"Ang estudyante <span className="bg-blue-200 px-1 rounded">nagsumite ng kanyang takdang-aralin</span> bago ang <span className="bg-blue-200 px-1 rounded">deadline</span>."</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Reference Text:</span>
+                    <p className="text-sm">"Ipinasa ng mag-aaral ang kanyang gawain bago ang takdang oras."</p>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <p><strong>Highlights & Comments:</strong></p>
+                    <p>• "nagsumite ng kanyang takdang-aralin" → More natural: "ipinasa ang kanyang gawain"</p>
+                    <p>• "deadline" → Better Tagalog term: "takdang oras"</p>
+                    <p><strong>Final Form:</strong> "Ipinasa ng mag-aaral ang kanyang gawain bago ang takdang oras."</p>
+                    <p><strong>Scores:</strong> Fluency: 3, Adequacy: 4, Overall: 3</p>
+                  </div>
                 </div>
-                <ul className="text-amber-800 space-y-1 text-sm">
-                  <li>• Each sentence can only be annotated once per user</li>
-                  <li>• Your annotations contribute to important research on machine translation quality</li>
-                  <li>• If you encounter technical issues, please contact the administrators</li>
-                  <li>• You can access these guidelines anytime from the help menu</li>
-                </ul>
               </div>
             </section>
           </div>

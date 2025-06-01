@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { sentencesAPI, annotationsAPI } from '../services/api';
 import type { Sentence, AnnotationCreate, TextHighlight } from '../types';
-import { ChevronRight, Check, AlertCircle, Clock, MessageCircle, Trash2, Plus, Highlighter, X, Save, Eye, EyeOff } from 'lucide-react';
+import { ChevronRight, Check, AlertCircle, Clock, MessageCircle, Trash2, Plus, Highlighter, X } from 'lucide-react';
 
 interface TextSegment extends Omit<TextHighlight, 'id' | 'annotation_id' | 'created_at'> {
   id: string; // temporary local ID for UI
@@ -13,6 +13,7 @@ interface SentenceAnnotation {
   adequacy_score?: number;
   overall_quality?: number;
   comments: string;
+  final_form: string;
   time_spent_seconds: number;
   highlights: TextSegment[];
   isExpanded?: boolean;
@@ -28,7 +29,6 @@ const AnnotationInterface: React.FC = () => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showGuidelinesModal, setShowGuidelinesModal] = useState(false);
   const [selectedRange, setSelectedRange] = useState<{ start: number; end: number } | null>(null);
-  const [commentType, setCommentType] = useState<'error' | 'suggestion' | 'note'>('note');
   const [tempComment, setTempComment] = useState('');
   const [activeTextType, setActiveTextType] = useState<'machine' | 'reference'>('machine');
   const [activeSentenceId, setActiveSentenceId] = useState<number | null>(null);
@@ -36,6 +36,9 @@ const AnnotationInterface: React.FC = () => {
   const [isCommentModalClosing, setIsCommentModalClosing] = useState(false);
   const [expandedSentences, setExpandedSentences] = useState<Set<number>>(new Set());
   const [submittingIds, setSubmittingIds] = useState<Set<number>>(new Set());
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isErrorModalClosing, setIsErrorModalClosing] = useState(false);
   
   const textRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -59,6 +62,7 @@ const AnnotationInterface: React.FC = () => {
           adequacy_score: undefined,
           overall_quality: undefined,
           comments: '',
+          final_form: '',
           time_spent_seconds: 0,
           highlights: [],
           isExpanded: false,
@@ -70,7 +74,7 @@ const AnnotationInterface: React.FC = () => {
       if (loadedSentences.length === 0) {
         setMessage('Great! You have completed all available sentences. More will be added soon.');
       }
-    } catch (error) {
+    } catch {
       setMessage('Error loading sentences. Please try again.');
     } finally {
       setIsLoading(false);
@@ -90,20 +94,44 @@ const AnnotationInterface: React.FC = () => {
     const container = textRefs.current.get(refKey);
     if (!container || !container.contains(range.commonAncestorContainer)) return;
 
-    // Get the full text content
-    const fullText = container.textContent || '';
+    // Get the original sentence text (not the DOM textContent which includes highlights)
+    const sentence = sentences.find(s => s.id === sentenceId);
+    if (!sentence) return;
     
-    // Create a temporary range to calculate the start index
-    const tempRange = document.createRange();
-    tempRange.selectNodeContents(container);
-    tempRange.setEnd(range.startContainer, range.startOffset);
-    const startIndex = tempRange.toString().length;
-    
-    // Calculate end index
-    const endIndex = startIndex + selectedText.length;
+    const originalText = textType === 'machine' ? sentence.machine_translation : sentence.reference_translation;
+    if (!originalText) return;
 
-    setSelectedText(selectedText);
-    setSelectedRange({ start: startIndex, end: endIndex });
+    // Find the start index by searching for the selected text in the original text
+    const startIndex = originalText.indexOf(selectedText);
+    if (startIndex === -1) {
+      // If exact match not found, try to find a reasonable position
+      // This handles cases where selection might have extra whitespace
+      const trimmedSelection = selectedText.replace(/\s+/g, ' ');
+      const normalizedText = originalText.replace(/\s+/g, ' ');
+      const altStartIndex = normalizedText.indexOf(trimmedSelection);
+      if (altStartIndex === -1) return;
+      
+      // Find the actual position in the original text
+      let actualStartIndex = 0;
+      let normalizedIndex = 0;
+      for (let i = 0; i < originalText.length; i++) {
+        if (normalizedIndex === altStartIndex) {
+          actualStartIndex = i;
+          break;
+        }
+        if (originalText[i] !== ' ' || normalizedText[normalizedIndex] === ' ') {
+          normalizedIndex++;
+        }
+      }
+      setSelectedText(selectedText);
+      setSelectedRange({ start: actualStartIndex, end: actualStartIndex + trimmedSelection.length });
+    } else {
+      // Calculate end index
+      const endIndex = startIndex + selectedText.length;
+      setSelectedText(selectedText);
+      setSelectedRange({ start: startIndex, end: endIndex });
+    }
+
     setActiveTextType(textType);
     setActiveSentenceId(sentenceId);
     setShowCommentModal(true);
@@ -121,7 +149,6 @@ const AnnotationInterface: React.FC = () => {
       start_index: selectedRange.start,
       end_index: selectedRange.end,
       comment: tempComment.trim(),
-      highlight_type: commentType,
       text_type: activeTextType,
     };
 
@@ -175,6 +202,15 @@ const AnnotationInterface: React.FC = () => {
     }, 200);
   };
 
+  const closeErrorModal = () => {
+    setIsErrorModalClosing(true);
+    setTimeout(() => {
+      setShowErrorModal(false);
+      setErrorMessage('');
+      setIsErrorModalClosing(false);
+    }, 200);
+  };
+
   const renderHighlightedText = (text: string, highlights: TextSegment[], textType: 'machine' | 'reference') => {
     const relevantHighlights = highlights.filter(h => h.text_type === textType);
 
@@ -182,36 +218,44 @@ const AnnotationInterface: React.FC = () => {
       return <span>{text}</span>;
     }
 
-    // Sort highlights by start position
-    const sortedHighlights = [...relevantHighlights].sort((a, b) => a.start_index - b.start_index);
+    // Sort highlights by start position and filter out invalid ones
+    const validHighlights = relevantHighlights
+      .filter(h => h.start_index >= 0 && h.end_index <= text.length && h.start_index < h.end_index)
+      .sort((a, b) => a.start_index - b.start_index);
     
+    if (validHighlights.length === 0) {
+      return <span>{text}</span>;
+    }
+
     const parts = [];
     let lastIndex = 0;
 
-    sortedHighlights.forEach((highlight, index) => {
+    validHighlights.forEach((highlight, index) => {
+      // Ensure we don't have overlapping highlights by adjusting start position
+      const startIndex = Math.max(highlight.start_index, lastIndex);
+      const endIndex = Math.min(highlight.end_index, text.length);
+      
+      // Skip if this highlight would be empty after adjustments
+      if (startIndex >= endIndex) return;
+
       // Add text before highlight
-      if (highlight.start_index > lastIndex) {
+      if (startIndex > lastIndex) {
         parts.push(
           <span key={`text-${index}`}>
-            {text.slice(lastIndex, highlight.start_index)}
+            {text.slice(lastIndex, startIndex)}
           </span>
         );
       }
 
-      // Add highlighted text
-      const highlightClass = {
-        error: 'bg-red-200 border-b-2 border-red-400',
-        suggestion: 'bg-blue-200 border-b-2 border-blue-400',
-        note: 'bg-yellow-200 border-b-2 border-yellow-400',
-      }[highlight.highlight_type];
-
+      // Add highlighted text with single blue highlight style
+      const highlightedText = text.slice(startIndex, endIndex);
       parts.push(
         <span
           key={`highlight-${highlight.id}`}
-          className={`${highlightClass} px-1 rounded cursor-pointer relative group`}
+          className="bg-blue-200 border-b-2 border-blue-400 px-1 rounded cursor-pointer relative group"
           title={highlight.comment}
         >
-          {highlight.highlighted_text}
+          {highlightedText}
           <div className="absolute bottom-full left-0 mb-1 hidden group-hover:block z-10">
             <div className="bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap max-w-xs">
               {highlight.comment}
@@ -220,7 +264,7 @@ const AnnotationInterface: React.FC = () => {
         </span>
       );
 
-      lastIndex = highlight.end_index;
+      lastIndex = endIndex;
     });
 
     // Add remaining text
@@ -259,6 +303,18 @@ const AnnotationInterface: React.FC = () => {
     });
   };
 
+  const handleFinalFormChange = (sentenceId: number, finalForm: string) => {
+    setAnnotations(prev => {
+      const updated = new Map(prev);
+      const annotation = updated.get(sentenceId);
+      if (annotation) {
+        annotation.final_form = finalForm;
+        updated.set(sentenceId, annotation);
+      }
+      return updated;
+    });
+  };
+
   const calculateTimeSpent = (startTime: Date): number => {
     return Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
   };
@@ -266,6 +322,13 @@ const AnnotationInterface: React.FC = () => {
   const handleSubmit = async (sentenceId: number) => {
     const annotation = annotations.get(sentenceId);
     if (!annotation) return;
+
+    // Validation: If there are highlights, final_form is required
+    if (annotation.highlights.length > 0 && !annotation.final_form.trim()) {
+      setErrorMessage('Final form is required when you have annotations. Please provide the corrected sentence.');
+      setShowErrorModal(true);
+      return;
+    }
 
     const timeSpent = calculateTimeSpent(annotation.startTime || new Date());
     
@@ -275,7 +338,6 @@ const AnnotationInterface: React.FC = () => {
       start_index: segment.start_index,
       end_index: segment.end_index,
       text_type: segment.text_type,
-      highlight_type: segment.highlight_type,
       comment: segment.comment,
     }));
 
@@ -285,6 +347,7 @@ const AnnotationInterface: React.FC = () => {
       adequacy_score: annotation.adequacy_score,
       overall_quality: annotation.overall_quality,
       comments: annotation.comments,
+      final_form: annotation.final_form,
       time_spent_seconds: timeSpent,
       highlights: highlights,
     };
@@ -308,8 +371,8 @@ const AnnotationInterface: React.FC = () => {
       
       setMessage('Annotation saved successfully!');
       setTimeout(() => setMessage(''), 3000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Error saving annotation. Please try again.');
+    } catch (error: unknown) {
+      setMessage(error instanceof Error ? error.message : 'Error saving annotation. Please try again.');
       setTimeout(() => setMessage(''), 5000);
     } finally {
       setSubmittingIds(prev => {
@@ -436,10 +499,17 @@ const AnnotationInterface: React.FC = () => {
                       #{sentence.id}
                     </div>
                     
-                    <div className="col-span-4">
-                      <div className="text-xs text-gray-500 mb-1">Source ({sentence.source_language.toUpperCase()})</div>
+                    <div className="col-span-2">
+                      <div className="text-xs text-gray-500 mb-1">Source Text (ENG)</div>
                       <div className="text-sm text-gray-900 truncate" title={sentence.source_text}>
                         {sentence.source_text}
+                      </div>
+                    </div>
+                    
+                    <div className="col-span-2">
+                      <div className="text-xs text-gray-500 mb-1">Source Text (TGL)</div>
+                      <div className="text-sm text-gray-900 truncate" title={sentence.tagalog_source_text || "No Tagalog source text available"}>
+                        {sentence.tagalog_source_text || "[No TG source text]"}
                       </div>
                     </div>
                     
@@ -471,17 +541,26 @@ const AnnotationInterface: React.FC = () => {
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Source Text ({sentence.source_language.toUpperCase()})
+                            Source Text (ENG)
                           </label>
                           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                             <p className="text-gray-900 leading-relaxed">{sentence.source_text}</p>
                           </div>
                         </div>
                         
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Source Text (TGL)
+                          </label>
+                          <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                            <p className="text-gray-900 leading-relaxed">{sentence.tagalog_source_text || "No Tagalog source text available"}</p>
+                          </div>
+                        </div>
+                        
                         {sentence.reference_translation && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Reference Translation ({sentence.target_language.toUpperCase()})
+                              Reference Text ({sentence.target_language.toUpperCase()})
                               <span className="ml-2 text-xs text-gray-500">- Click and drag to highlight</span>
                             </label>
                             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -539,20 +618,14 @@ const AnnotationInterface: React.FC = () => {
                         <div className="space-y-2">
                           {annotation.highlights.map((highlight) => (
                             <div key={highlight.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                              <div className={`w-2 h-2 rounded-full mt-1.5 ${
-                                highlight.highlight_type === 'error' ? 'bg-red-400' :
-                                highlight.highlight_type === 'suggestion' ? 'bg-blue-400' : 'bg-yellow-400'
-                              }`} />
+                              <div className="w-2 h-2 rounded-full mt-1.5 bg-blue-400" />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center space-x-2 mb-1">
                                   <span className="text-xs font-medium text-gray-700">
                                     "{highlight.highlighted_text}"
                                   </span>
-                                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                    highlight.highlight_type === 'error' ? 'bg-red-100 text-red-700' :
-                                    highlight.highlight_type === 'suggestion' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
-                                  }`}>
-                                    {highlight.highlight_type}
+                                  <span className="text-xs text-gray-500">
+                                    ({highlight.text_type === 'machine' ? 'Machine Translation' : 'Reference Text'})
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-600">{highlight.comment}</p>
@@ -566,6 +639,22 @@ const AnnotationInterface: React.FC = () => {
                             </div>
                           ))}
                         </div>
+                      </div>
+                    )}
+
+                    {/* Final Form */}
+                    {annotation.highlights.length > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Final Form of the Sentence <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          value={annotation.final_form}
+                          onChange={(e) => handleFinalFormChange(sentence.id, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          rows={3}
+                          placeholder="Please provide the corrected/final form of the sentence..."
+                        />
                       </div>
                     )}
 
@@ -660,72 +749,39 @@ const AnnotationInterface: React.FC = () => {
               <div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-3">Overview</h4>
                 <p className="text-gray-600 mb-4">
-                  You will be evaluating machine-translated sentences by comparing them with reference translations. 
+                  You will be evaluating machine-translated sentences by comparing them with reference text. 
                   Your task is to assess the quality of the translation and provide detailed feedback.
                 </p>
               </div>
 
-              {/* Rating Scales */}
+              {/* Text Highlighting */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Rating Scales (1-5)</h4>
-                <div className="grid md:grid-cols-3 gap-4">
+                <h4 className="text-lg font-semibold text-gray-800 mb-3">Text Highlighting & Comments</h4>
+                <div className="space-y-3">
+                  <p className="text-gray-600">
+                    Select specific text portions to highlight and add comments about issues or observations:
+                  </p>
+                  
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h5 className="font-medium text-blue-900 mb-2">Fluency Score</h5>
-                    <div className="text-sm text-blue-800 space-y-1">
-                      <p><strong>5:</strong> Perfect fluency, natural language</p>
-                      <p><strong>4:</strong> Good fluency, minor awkwardness</p>
-                      <p><strong>3:</strong> Moderate fluency, some unnatural phrasing</p>
-                      <p><strong>2:</strong> Poor fluency, difficult to read</p>
-                      <p><strong>1:</strong> Very poor fluency, incomprehensible</p>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="w-4 h-4 bg-blue-200 border border-blue-400 rounded"></div>
+                      <span className="text-sm font-medium text-blue-900">Highlight & Comment</span>
                     </div>
-                  </div>
-                  
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h5 className="font-medium text-green-900 mb-2">Adequacy Score</h5>
-                    <div className="text-sm text-green-800 space-y-1">
-                      <p><strong>5:</strong> Perfect meaning preservation</p>
-                      <p><strong>4:</strong> Good, minor meaning differences</p>
-                      <p><strong>3:</strong> Moderate, some meaning lost</p>
-                      <p><strong>2:</strong> Poor, significant meaning differences</p>
-                      <p><strong>1:</strong> Very poor, completely different meaning</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <h5 className="font-medium text-purple-900 mb-2">Overall Quality</h5>
-                    <div className="text-sm text-purple-800 space-y-1">
-                      <p><strong>5:</strong> Excellent translation</p>
-                      <p><strong>4:</strong> Good translation, minor issues</p>
-                      <p><strong>3:</strong> Acceptable translation</p>
-                      <p><strong>2:</strong> Poor translation, needs improvement</p>
-                      <p><strong>1:</strong> Very poor translation</p>
-                    </div>
+                    <p className="text-sm text-blue-800">
+                      Select any problematic text and add a comment explaining the issue, your observation, or suggestion for improvement.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Text Highlighting */}
+              {/* Final Form */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Text Highlighting & Annotations</h4>
-                <div className="space-y-3">
-                  <p className="text-gray-600">
-                    Select specific text portions to highlight and annotate problematic areas:
+                <h4 className="text-lg font-semibold text-gray-800 mb-3">Final Form Requirement</h4>
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <p className="text-green-800">
+                    <strong>Required when you add annotations:</strong> After highlighting issues and adding comments, provide a corrected final form of the sentence. 
+                    This should be your version of what the translation should be.
                   </p>
-                  
-                  <div className="grid md:grid-cols-3 gap-4 mt-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-red-200 border border-red-400 rounded"></div>
-                      <span className="text-sm"><strong>Error:</strong> Incorrect translations, grammar mistakes</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-blue-200 border border-blue-400 rounded"></div>
-                      <span className="text-sm"><strong>Suggestion:</strong> Alternative translations, improvements</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-yellow-200 border border-yellow-400 rounded"></div>
-                      <span className="text-sm"><strong>Note:</strong> General observations, context information</span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -768,14 +824,17 @@ const AnnotationInterface: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-sm font-medium text-gray-700">Machine Translation:</span>
-                      <p className="text-sm">"The doctor <span className="bg-red-200 px-1 rounded">prescripted</span> medicine for the patient's <span className="bg-yellow-200 px-1 rounded">state</span>."</p>
+                      <p className="text-sm">"The doctor <span className="bg-blue-200 px-1 rounded">prescripted</span> medicine for the patient's <span className="bg-blue-200 px-1 rounded">state</span>."</p>
                     </div>
                     <div>
                       <span className="text-sm font-medium text-gray-700">Reference:</span>
                       <p className="text-sm">"The doctor prescribed medication for the patient's condition."</p>
                     </div>
                     <div className="text-sm text-gray-600">
-                      <p><strong>Issues:</strong> Grammar error ("prescripted"), suboptimal word choice ("state" vs "condition")</p>
+                      <p><strong>Highlights & Comments:</strong></p>
+                      <p>• "prescripted" → Grammar error: should be "prescribed"</p>
+                      <p>• "state" → Word choice: "condition" is more appropriate in medical context</p>
+                      <p><strong>Final Form:</strong> "The doctor prescribed medication for the patient's condition."</p>
                       <p><strong>Scores:</strong> Fluency: 3, Adequacy: 4, Overall: 3</p>
                     </div>
                   </div>
@@ -814,31 +873,6 @@ const AnnotationInterface: React.FC = () => {
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Annotation Type
-              </label>
-              <div className="flex space-x-2">
-                {[
-                  { value: 'error', label: 'Error', color: 'red' },
-                  { value: 'suggestion', label: 'Suggestion', color: 'blue' },
-                  { value: 'note', label: 'Note', color: 'yellow' },
-                ].map((type) => (
-                  <button
-                    key={type.value}
-                    onClick={() => setCommentType(type.value as any)}
-                    className={`px-3 py-2 text-xs rounded ${
-                      commentType === type.value
-                        ? `bg-${type.color}-200 text-${type.color}-800 border-${type.color}-400`
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    } border transition-colors`}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Comment
@@ -867,6 +901,39 @@ const AnnotationInterface: React.FC = () => {
               >
                 <Plus className="h-4 w-4" />
                 <span>Add Annotation</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${
+          isErrorModalClosing ? 'animate-fade-out' : 'animate-fade-in'
+        }`}>
+          <div className={`bg-white rounded-lg p-6 w-full max-w-md ${
+            isErrorModalClosing ? 'animate-scale-out' : 'animate-scale-in'
+          }`}>
+            <div className="flex items-center mb-4">
+              <AlertCircle className="h-6 w-6 text-red-500 mr-3" />
+              <h3 className="text-lg font-medium text-gray-900">
+                Required Field
+              </h3>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600">
+                {errorMessage}
+              </p>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={closeErrorModal}
+                className="btn-primary"
+              >
+                OK
               </button>
             </div>
           </div>

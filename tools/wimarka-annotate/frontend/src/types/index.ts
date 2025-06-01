@@ -14,6 +14,7 @@ export interface User {
 export interface Sentence {
   id: number;
   source_text: string;
+  tagalog_source_text?: string;
   machine_translation: string;
   reference_translation?: string;
   source_language: string;
@@ -30,7 +31,6 @@ export interface TextHighlight {
   start_index: number;
   end_index: number;
   text_type: 'machine' | 'reference';
-  highlight_type: 'error' | 'suggestion' | 'note';
   comment: string;
   created_at?: string;
 }
@@ -45,6 +45,7 @@ export interface Annotation {
   errors_found?: string;
   suggested_correction?: string;
   comments?: string;
+  final_form?: string;
   time_spent_seconds?: number;
   annotation_status: 'in_progress' | 'completed' | 'reviewed';
   created_at: string;
@@ -82,6 +83,7 @@ export interface AnnotationCreate {
   errors_found?: string;
   suggested_correction?: string;
   comments?: string;
+  final_form?: string;
   time_spent_seconds?: number;
   highlights?: TextHighlight[];
 }
@@ -93,6 +95,7 @@ export interface AnnotationUpdate {
   errors_found?: string;
   suggested_correction?: string;
   comments?: string;
+  final_form?: string;
   time_spent_seconds?: number;
   annotation_status?: 'in_progress' | 'completed' | 'reviewed';
   highlights?: TextHighlight[];

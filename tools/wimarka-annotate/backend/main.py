@@ -237,7 +237,6 @@ def create_annotation(
                 start_index=highlight_data.start_index,
                 end_index=highlight_data.end_index,
                 text_type=highlight_data.text_type,
-                highlight_type=highlight_data.highlight_type,
                 comment=highlight_data.comment
             )
             db.add(db_highlight)
@@ -309,7 +308,6 @@ def update_annotation(
                 start_index=highlight_data.start_index,
                 end_index=highlight_data.end_index,
                 text_type=highlight_data.text_type,
-                highlight_type=highlight_data.highlight_type,
                 comment=highlight_data.comment
             )
             db.add(db_highlight)

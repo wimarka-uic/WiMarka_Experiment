@@ -35,6 +35,7 @@ class Token(BaseModel):
 # Sentence schemas
 class SentenceBase(BaseModel):
     source_text: str
+    tagalog_source_text: Optional[str] = None
     machine_translation: str
     reference_translation: Optional[str] = None
     source_language: str
@@ -58,7 +59,6 @@ class TextHighlightBase(BaseModel):
     start_index: int
     end_index: int
     text_type: str  # 'machine' or 'reference'
-    highlight_type: str  # 'error', 'suggestion', 'note'
     comment: str
 
 class TextHighlightCreate(TextHighlightBase):
@@ -80,6 +80,7 @@ class AnnotationBase(BaseModel):
     errors_found: Optional[str] = None  # Legacy field
     suggested_correction: Optional[str] = None  # Legacy field
     comments: Optional[str] = None  # General comments
+    final_form: Optional[str] = None  # Final corrected form of the sentence
     time_spent_seconds: Optional[int] = None
 
 class AnnotationCreate(AnnotationBase):

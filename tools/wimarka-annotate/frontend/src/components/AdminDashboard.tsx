@@ -11,6 +11,7 @@ const AdminDashboard: React.FC = () => {
   const [showAddSentence, setShowAddSentence] = useState(false);
   const [newSentence, setNewSentence] = useState({
     source_text: '',
+    tagalog_source_text: '',
     machine_translation: '',
     reference_translation: '',
     source_language: 'en',
@@ -44,6 +45,7 @@ const AdminDashboard: React.FC = () => {
       await sentencesAPI.createSentence(newSentence);
       setNewSentence({
         source_text: '',
+        tagalog_source_text: '',
         machine_translation: '',
         reference_translation: '',
         source_language: 'en',
@@ -438,14 +440,26 @@ const AdminDashboard: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Source Text
+                      SOURCE TEXT (ENG)
                     </label>
                     <textarea
                       value={newSentence.source_text}
                       onChange={(e) => setNewSentence({...newSentence, source_text: e.target.value})}
                       className="textarea-field"
                       required
-                      placeholder="Enter the source text..."
+                      placeholder="Enter the English source text..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      SOURCE TEXT (TAGALOG | TG)
+                    </label>
+                    <textarea
+                      value={newSentence.tagalog_source_text}
+                      onChange={(e) => setNewSentence({...newSentence, tagalog_source_text: e.target.value})}
+                      className="textarea-field"
+                      placeholder="Enter the Tagalog source text..."
                     />
                   </div>
 
@@ -464,13 +478,13 @@ const AdminDashboard: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Reference Translation (Optional)
+                      Reference Text (Optional)
                     </label>
                     <textarea
                       value={newSentence.reference_translation}
                       onChange={(e) => setNewSentence({...newSentence, reference_translation: e.target.value})}
                       className="textarea-field"
-                      placeholder="Enter a reference translation..."
+                      placeholder="Enter a reference text..."
                     />
                   </div>
 

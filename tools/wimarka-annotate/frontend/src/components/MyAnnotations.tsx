@@ -31,36 +31,44 @@ const MyAnnotations: React.FC = () => {
       return <span>{text}</span>;
     }
 
-    // Sort highlights by start position
-    const sortedHighlights = [...relevantHighlights].sort((a, b) => a.start_index - b.start_index);
+    // Sort highlights by start position and filter out invalid ones
+    const validHighlights = relevantHighlights
+      .filter(h => h.start_index >= 0 && h.end_index <= text.length && h.start_index < h.end_index)
+      .sort((a, b) => a.start_index - b.start_index);
     
+    if (validHighlights.length === 0) {
+      return <span>{text}</span>;
+    }
+
     const parts = [];
     let lastIndex = 0;
 
-    sortedHighlights.forEach((highlight, index) => {
+    validHighlights.forEach((highlight, index) => {
+      // Ensure we don't have overlapping highlights by adjusting start position
+      const startIndex = Math.max(highlight.start_index, lastIndex);
+      const endIndex = Math.min(highlight.end_index, text.length);
+      
+      // Skip if this highlight would be empty after adjustments
+      if (startIndex >= endIndex) return;
+
       // Add text before highlight
-      if (highlight.start_index > lastIndex) {
+      if (startIndex > lastIndex) {
         parts.push(
           <span key={`text-${index}`}>
-            {text.slice(lastIndex, highlight.start_index)}
+            {text.slice(lastIndex, startIndex)}
           </span>
         );
       }
 
-      // Add highlighted text
-      const highlightClass = {
-        error: 'bg-red-200 border-b-2 border-red-400',
-        suggestion: 'bg-blue-200 border-b-2 border-blue-400',
-        note: 'bg-yellow-200 border-b-2 border-yellow-400',
-      }[highlight.highlight_type];
-
+      // Add highlighted text with single blue highlight style
+      const highlightedText = text.slice(startIndex, endIndex);
       parts.push(
         <span
           key={`highlight-${highlight.id}`}
-          className={`${highlightClass} px-1 rounded cursor-pointer relative group`}
+          className="bg-blue-200 border-b-2 border-blue-400 px-1 rounded cursor-pointer relative group"
           title={highlight.comment}
         >
-          {highlight.highlighted_text}
+          {highlightedText}
           <div className="absolute bottom-full left-0 mb-1 hidden group-hover:block z-10">
             <div className="bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap max-w-xs">
               {highlight.comment}
@@ -69,7 +77,7 @@ const MyAnnotations: React.FC = () => {
         </span>
       );
 
-      lastIndex = highlight.end_index;
+      lastIndex = endIndex;
     });
 
     // Add remaining text
@@ -246,28 +254,35 @@ const MyAnnotations: React.FC = () => {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Source Text</h4>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">SOURCE TEXT (ENG)</h4>
                     <p className="text-sm text-gray-900 bg-white rounded p-3 border">
                       {annotation.sentence.source_text}
                     </p>
                   </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">SOURCE TEXT (TAGALOG | TG)</h4>
+                    <p className="text-sm text-gray-900 bg-white rounded p-3 border">
+                      {annotation.sentence.tagalog_source_text || "No Tagalog source text available"}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-2">Machine Translation</h4>
                     <div className="text-sm text-gray-900 bg-white rounded p-3 border">
                       {renderHighlightedText(annotation.sentence.machine_translation, annotation.highlights, 'machine')}
                     </div>
                   </div>
-                </div>
-
-                {/* Reference Translation if exists */}
-                {annotation.sentence.reference_translation && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Reference Translation</h4>
-                    <div className="text-sm text-gray-900 bg-white rounded p-3 border">
-                      {renderHighlightedText(annotation.sentence.reference_translation, annotation.highlights, 'reference')}
+                  {annotation.sentence.reference_translation && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Reference Text</h4>
+                      <div className="text-sm text-gray-900 bg-white rounded p-3 border">
+                        {renderHighlightedText(annotation.sentence.reference_translation, annotation.highlights, 'reference')}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Scores */}
                 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -301,29 +316,30 @@ const MyAnnotations: React.FC = () => {
                     <div className="space-y-2">
                       {annotation.highlights.map((highlight) => (
                         <div key={highlight.id} className="flex items-start space-x-3 p-3 bg-white rounded-lg border">
-                          <div className={`w-2 h-2 rounded-full mt-1.5 ${
-                            highlight.highlight_type === 'error' ? 'bg-red-400' :
-                            highlight.highlight_type === 'suggestion' ? 'bg-blue-400' : 'bg-yellow-400'
-                          }`} />
+                          <div className="w-2 h-2 rounded-full mt-1.5 bg-blue-400" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-1">
                               <span className="text-xs font-medium text-gray-700">
                                 "{highlight.highlighted_text}"
                               </span>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                highlight.highlight_type === 'error' ? 'bg-red-100 text-red-700' :
-                                highlight.highlight_type === 'suggestion' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
-                              }`}>
-                                {highlight.highlight_type}
-                              </span>
                               <span className="text-xs text-gray-500">
-                                ({highlight.text_type === 'machine' ? 'Machine Translation' : 'Reference'})
+                                ({highlight.text_type === 'machine' ? 'Machine Translation' : 'Reference Text'})
                               </span>
                             </div>
                             <p className="text-xs text-gray-600">{highlight.comment}</p>
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Final Form */}
+                {annotation.final_form && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Final Form</h4>
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-gray-900">{annotation.final_form}</p>
                     </div>
                   </div>
                 )}
@@ -345,7 +361,7 @@ const MyAnnotations: React.FC = () => {
                     )}
                     {annotation.comments && (
                       <div>
-                        <h5 className="text-xs font-medium text-gray-700 mb-1">Comments</h5>
+                        <h5 className="text-xs font-medium text-gray-700 mb-1">Additional Comments</h5>
                         <p className="text-sm text-gray-900">{annotation.comments}</p>
                       </div>
                     )}
