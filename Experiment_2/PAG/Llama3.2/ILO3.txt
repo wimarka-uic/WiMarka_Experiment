@@ -1,0 +1,74 @@
+Bii kan mabiskeg, sika Urduja!"
+ -> "Bii kan mabiskeg, si ka Urduja!"
+
+2. "Ta say inarom ya salita pateyto nabuasla!"
+ -> "Ta say inarom ya salitang pantao na ubasla!"
+
+3. "O ed masamit ya invitación na diktadura!"
+ -> "O ed masamit a pagkakatawag sa pamamahala ng diktadura!"
+
+4. "Agi, agay ka la ngula Colasa!"
+ -> "Agi, agay ka la Colasa!"
+
+5. "Kapag nasabi ra yan agew, saray mankaliktay votos, dake!"
+ -> "Sa kapanalo nang bawat pagbaboto ay sariwang makakatawag sa boto, daka!"
+
+6. "Pantonungen siri kanunotan Pian sayan gawa ag nadera!"
+ -> ( Same translation as above )
+
+7. "Alay sibeg daranian sindikato met!"
+ -> "Ang lahi sa pamamahala ng sindikatong darating!"
+
+8. "Salaya, O inad-arok ira ta say ipatey sikato?"
+ -> "Kung saan ay hindi na kailipat na siya ng isang sekato?"
+
+9. "Say tagline toy wasi et bato bato sa langit, say nanpainit asasnit!"
+ -> "Ang tagline na walang batas sa langit, na nag-iisang pahiwatig!"
+
+10. "Maong labat ta anggapoy mauges ya asagmakan to imay pasyente tan agla manbayag nayarian to lan ituloy so gagawaen to sakbay ya atumba!"
+ -> "Ang masasabing malaking bagay na hindi naging pasyente ng isang pamilya, kung saan ay walang kaugnayan!"
+
+11. "Lorey ka tay nilibon multa ay, kasian yoray maniirap, agagi!"
+ -> ( Same translation as above )
+
+12. "Talimokor tayon amin, kaibaratay aso tan pusa yoradtan!"
+ -> "Ang mga taong pinakabago sa panahon, na walang puso ng pagsalagay!"
+
+13. "Paelek-elekan kayo labat met ditad AFP no ontan, Heneral!"
+ -> "Kung ang lahi ay kumilos kasama ang AFP at ang pangulo?"
+
+14. "Antis kon nalingwanan agagik tan atateng, Meri Krrismas pa lad sikayon amin!"
+ -> ( Same translation as above )
+
+15. "Magnayon lawas so malayug a luyag tan mansiansia so salitan Pangasinan!"
+ -> "Ang masasabiin na mahaba ng lalawigan sa pangangarap, ngunit walang kaugnayan sa Pangasinan!"
+
+16. "Ag amta no ag ka papalmitay onterak itay dakolap mo!"
+ -> ( Same translation as above )
+
+17. "Awey lanti no akin et ag da bandayen itan a salita!"
+ -> "Nang hindi ko napasama ang mga panginigiit na paglalarawan!"
+
+18. "Panon ko la kasi Nanoy no nanengneng ta kan napasegsegang!"
+ -> ( Same translation as above )
+
+19. "Anto may kuan tonmav sararnulyon!"
+ -> ( Same translation as above )
+
+20. "Saray tuak a man-aklebey Tan say dasal kon agew-agew Dinge!"
+ -> "Ang pangunahing pagtanggap ng mga utos ng taniman, na walang kaugnayan sa isang bagay!"
+
+21. "No anto la tan a liket ed panguingue!"
+ -> ( Same translation as above )
+
+22. "Macapasigsinagem so kipapasey toon pobre!"
+ -> "Ang pagkakatawag ng mabuting katapatan sa mga tindig!"
+
+23. "Pantonungen siri kanunotan Pian sayan gawa ag nadera!"
+ -> ( Same translation as above )
+
+24. "Ngalngali nin agto ongalaw balet agto met la angangko naanosan so dilin angob to!"
+ -> "Ang mga tindig na wala ng kaugnayan sa isang lugar, na walang kinalamang panggawa!"
+
+25. "Atan et ta agyo antay manusar na kaor!"
+ -> ( Same translation as above )
