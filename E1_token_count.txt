@@ -26,12 +26,12 @@ Max Tokens: 16
 Min Tokens: 5       
 Avg Tokens: 8.088   
 
-Compound_Declarative  
-Tokens: 1934
-Unique Tokens: 635    
-Max Tokens: 30        
-Min Tokens: 8
-Avg Tokens: 15.472    
+Compound_Declarative
+Tokens: 1934        
+Unique Tokens: 635  
+Max Tokens: 30      
+Min Tokens: 8       
+Avg Tokens: 15.472  
 
 Compound_Interrogative
 Tokens: 1901
@@ -83,11 +83,11 @@ Min Tokens: 6
 Avg Tokens: 14.104
 
 Complex_Compound_Declarative
-Tokens: 3385
-Unique Tokens: 963
+Tokens: 3382
+Unique Tokens: 962
 Max Tokens: 46
 Min Tokens: 16
-Avg Tokens: 27.08
+Avg Tokens: 27.056
 
 Complex_Compound_Interrogative
 Tokens: 3395
@@ -111,8 +111,8 @@ Min Tokens: 11
 Avg Tokens: 23.64
 
 Experiment 1 Findings:
-Tokens: 30627
-Unique Tokens: 3926
+Tokens: 30624
+Unique Tokens: 3930
 Max Tokens: 46
 Min Tokens: 5
-Avg Tokens: 15.3135
+Avg Tokens: 15.312

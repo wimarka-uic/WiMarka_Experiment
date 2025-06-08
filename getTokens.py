@@ -117,4 +117,4 @@ def getTokens(EXP):
         printFindings(E2_TOKENS, E1_LENGTHS)
 
 
-getTokens(1)
+getTokens(0)
