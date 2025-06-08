@@ -1,0 +1,118 @@
+Simple_Declarative
+Tokens: 1105        
+Unique Tokens: 456  
+Max Tokens: 15      
+Min Tokens: 6       
+Avg Tokens: 8.84    
+
+Simple_Interrogative
+Tokens: 1125        
+Unique Tokens: 404  
+Max Tokens: 17      
+Min Tokens: 6       
+Avg Tokens: 9.0     
+
+Simple_Imperative   
+Tokens: 1018        
+Unique Tokens: 412  
+Max Tokens: 16      
+Min Tokens: 6       
+Avg Tokens: 8.144   
+
+Simple_Exclamatory  
+Tokens: 1011        
+Unique Tokens: 410  
+Max Tokens: 16      
+Min Tokens: 5       
+Avg Tokens: 8.088   
+
+Compound_Declarative  
+Tokens: 1934
+Unique Tokens: 635    
+Max Tokens: 30        
+Min Tokens: 8
+Avg Tokens: 15.472    
+
+Compound_Interrogative
+Tokens: 1901
+Unique Tokens: 587    
+Max Tokens: 31        
+Min Tokens: 9
+Avg Tokens: 15.208    
+
+Compound_Imperative   
+Tokens: 1540
+Unique Tokens: 551    
+Max Tokens: 27        
+Min Tokens: 6
+Avg Tokens: 12.32     
+
+Compound_Exclamatory  
+Tokens: 1692
+Unique Tokens: 578    
+Max Tokens: 22        
+Min Tokens: 7
+Avg Tokens: 13.536
+
+Complex_Declarative
+Tokens: 1890
+Unique Tokens: 595
+Max Tokens: 30
+Min Tokens: 8
+Avg Tokens: 15.12
+
+Complex_Interrogative
+Tokens: 1986
+Unique Tokens: 611
+Max Tokens: 28
+Min Tokens: 8
+Avg Tokens: 15.888
+
+Complex_Imperative
+Tokens: 1417
+Unique Tokens: 503
+Max Tokens: 27
+Min Tokens: 6
+Avg Tokens: 11.336
+
+Complex_Exclamatory
+Tokens: 1763
+Unique Tokens: 588
+Max Tokens: 29
+Min Tokens: 6
+Avg Tokens: 14.104
+
+Complex_Compound_Declarative
+Tokens: 3385
+Unique Tokens: 963
+Max Tokens: 46
+Min Tokens: 16
+Avg Tokens: 27.08
+
+Complex_Compound_Interrogative
+Tokens: 3395
+Unique Tokens: 901
+Max Tokens: 46
+Min Tokens: 13
+Avg Tokens: 27.16
+
+Complex_Compound_Imperative
+Tokens: 2510
+Unique Tokens: 736
+Max Tokens: 42
+Min Tokens: 11
+Avg Tokens: 20.08
+
+Complex_Compound_Exclamatory
+Tokens: 2955
+Unique Tokens: 903
+Max Tokens: 43
+Min Tokens: 11
+Avg Tokens: 23.64
+
+Experiment 1 Findings:
+Tokens: 30627
+Unique Tokens: 3926
+Max Tokens: 46
+Min Tokens: 5
+Avg Tokens: 15.3135

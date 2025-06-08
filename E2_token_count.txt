@@ -1,0 +1,230 @@
+BIK - 1
+Tokens: 406
+Unique Tokens: 227
+Max Tokens: 33
+Min Tokens: 8
+Avg Tokens: 16.24
+
+BIK - 2
+Tokens: 264
+Unique Tokens: 141
+Max Tokens: 21
+Min Tokens: 6
+Avg Tokens: 10.56
+
+BIK - 3
+Tokens: 295
+Unique Tokens: 158
+Max Tokens: 27
+Min Tokens: 6
+Avg Tokens: 11.8
+
+BIK
+Tokens: 965
+Unique Tokens: 443
+Max Tokens: 33
+Min Tokens: 6
+Avg Tokens: 12.866666666666667
+
+CEB - 1
+Tokens: 351
+Unique Tokens: 205
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 14.04
+
+CEB - 2
+Tokens: 256
+Unique Tokens: 158
+Max Tokens: 18
+Min Tokens: 7
+Avg Tokens: 10.24
+
+CEB - 3
+Tokens: 251
+Unique Tokens: 161
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 10.04
+
+CEB
+Tokens: 858
+Unique Tokens: 441
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 11.44
+
+HIL - 1
+Tokens: 352
+Unique Tokens: 187
+Max Tokens: 25
+Min Tokens: 7
+Avg Tokens: 14.08
+
+HIL - 2
+Tokens: 275
+Unique Tokens: 137
+Max Tokens: 18
+Min Tokens: 7
+Avg Tokens: 11.0
+
+HIL - 3
+Tokens: 268
+Unique Tokens: 147
+Max Tokens: 19
+Min Tokens: 6
+Avg Tokens: 10.72
+
+HIL
+Tokens: 895
+Unique Tokens: 397
+Max Tokens: 25
+Min Tokens: 6
+Avg Tokens: 11.933333333333334
+
+ILO - 1
+Tokens: 337
+Unique Tokens: 182
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 13.48
+
+ILO - 2
+Tokens: 276
+Unique Tokens: 153
+Max Tokens: 23
+Min Tokens: 7
+Avg Tokens: 11.04
+
+ILO - 3
+Tokens: 368
+Unique Tokens: 193
+Max Tokens: 24
+Min Tokens: 6
+Avg Tokens: 14.72
+
+ILO
+Tokens: 981
+Unique Tokens: 460
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 13.08
+
+PAM - 1
+Tokens: 330
+Unique Tokens: 210
+Max Tokens: 25
+Min Tokens: 8
+Avg Tokens: 13.2
+
+PAM - 2
+Tokens: 253
+Unique Tokens: 156
+Max Tokens: 18
+Min Tokens: 6
+Avg Tokens: 10.12
+
+PAM - 3
+Tokens: 230
+Unique Tokens: 159
+Max Tokens: 24
+Min Tokens: 5
+Avg Tokens: 9.2
+
+PAM
+Tokens: 813
+Unique Tokens: 443
+Max Tokens: 25
+Min Tokens: 5
+Avg Tokens: 10.84
+
+PAG - 1
+Tokens: 404
+Unique Tokens: 252
+Max Tokens: 27
+Min Tokens: 10
+Avg Tokens: 16.16
+
+PAG - 2
+Tokens: 325
+Unique Tokens: 189
+Max Tokens: 31
+Min Tokens: 7
+Avg Tokens: 13.0
+
+PAG - 3
+Tokens: 269
+Unique Tokens: 180
+Max Tokens: 24
+Min Tokens: 6
+Avg Tokens: 10.76
+
+PAG
+Tokens: 998
+Unique Tokens: 521
+Max Tokens: 31
+Min Tokens: 6
+Avg Tokens: 13.306666666666667
+
+TGL - 1
+Tokens: 306
+Unique Tokens: 176
+Max Tokens: 21
+Min Tokens: 6
+Avg Tokens: 12.24
+
+TGL - 2
+Tokens: 271
+Unique Tokens: 156
+Max Tokens: 17
+Min Tokens: 6
+Avg Tokens: 10.84
+
+TGL - 3
+Tokens: 285
+Unique Tokens: 155
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 11.4
+
+TGL
+Tokens: 862
+Unique Tokens: 402
+Max Tokens: 26
+Min Tokens: 6
+Avg Tokens: 11.493333333333334
+
+WAR - 1
+Tokens: 303
+Unique Tokens: 192
+Max Tokens: 18
+Min Tokens: 6
+Avg Tokens: 12.12
+
+WAR - 2
+Tokens: 269
+Unique Tokens: 143
+Max Tokens: 17
+Min Tokens: 6
+Avg Tokens: 10.76
+
+WAR - 3
+Tokens: 283
+Unique Tokens: 160
+Max Tokens: 28
+Min Tokens: 6
+Avg Tokens: 11.32
+
+WAR
+Tokens: 855
+Unique Tokens: 427
+Max Tokens: 28
+Min Tokens: 6
+Avg Tokens: 11.4
+
+Experiment 2 Findings:
+Tokens: 7227
+Unique Tokens: 3108
+Max Tokens: 33
+Min Tokens: 5
+Avg Tokens: 12.045
